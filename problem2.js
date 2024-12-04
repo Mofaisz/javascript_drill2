@@ -1,47 +1,40 @@
+// function for average salary based on the specific role
 function averageSalary(data) {
-  // Create an object to store roles as keys and an array of salaries as values
-  const roleAndSalary = new Object();
+  //checks for falsy values
+  if (!data) {
+    return null;
+  }
+  //initializes an object to store key as role and value as array of salaries
+  let roleAndSalary = {};
 
-  //contains array of object
-  employeeInfoArray = data.data;
+  // Iterates over each elements of data
+  data.forEach((element) => {
+    // Extracts the role
+    let role = element.hr[0];
+    // Extracts the salary and removing the $ and ,
+    let salary = parseFloat(element.hr[1].replace(/[$,]/g, ""));
 
-  //Iterating values of employeeInfoArray (values is in form of object)
-  for (let values of employeeInfoArray) {
-    // role from the data
-    const role = values.hr[0];
-    // salary in form of int(removed $ and ,)
-    const salary = parseFloat(values.hr[1].replace(/[$,]/g, ""));
-
-    //checks if roleAndSalary object contains that specific role
+    // If the role doesn't exist it will initialize role as key and value as empty array
     if (!roleAndSalary[role]) {
-      roleAndSalary[role] = []; //It will add role with an empty array
+      roleAndSalary[role] = [];
     }
-    // Add the salary to the corresponding role's array
+    // if it is already initializes ,pushing the salary into array of roleAndObjects
     roleAndSalary[role].push(salary);
-  }
+  });
 
-  // Create an object to store the average salary for each role
-  const roleAndSalaryWithAverage = new Object();
-
-  // Iterate through each role in the roleAndSalary object
-  for (let role in roleAndSalary) {
-    let sumOfSalary = 0; // Initialize sum for the current role's salaries
-    const salaryArray = roleAndSalary[role]; // Get the array of salaries for the role
-
-    // Calculate the total sum of salaries for the role
-    for (let perSalary = 0; perSalary < salaryArray.length; perSalary++) {
-      sumOfSalary += salaryArray[perSalary];
-    }
-
-    // Calculate the average salary for the role
-    const averageSalary = sumOfSalary / salaryArray.length;
-    // Store the average salary in the result object
-    roleAndSalaryWithAverage[role] = averageSalary;
-  }
-
-  // Return the object containing average salaries for each role
+  // for calculating the average salary for each role and store it into new object
+  const roleAndSalaryWithAverage = Object.entries(roleAndSalary).reduce(
+    (accumulator, [role, salary]) => {
+      // calculates the average salary for specific role
+      const average_salary = salary.reduce((accu, sal) => {
+        return (accu + sal) / salary.length;
+      }, 0);
+      //stores the average salary for their role
+      accumulator[role] = average_salary;
+      return accumulator;
+    },
+    {}
+  );
   return roleAndSalaryWithAverage;
 }
-
-// Export the function for use in other files
-module.exports = averageSalary;
+module.exports = averageSalary; // Exporting the function for further use
