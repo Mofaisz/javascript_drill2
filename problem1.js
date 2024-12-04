@@ -1,27 +1,30 @@
+// function to group people based on their role
 function groupByRole(data) {
-  //checks for all falsy values
-  if (!data || !data.data) {
+  //
+  if (!data) {
     return null;
   }
-  //Initialising an empty objects
-  roleAndName = new Object();
-  //contains array of object
-  const employeeInfoArray = data.data;
-  //Iterating values of employeeInfoArray (values is in form of object)
-  for (let values of employeeInfoArray) {
-    const role = values.hr[0];
-    const fullName = values.name.join(" "); //It will contain concatenation of names array basically full name
+  const userByRole = data.reduce((accumulator, initialValue) => {
+    // extract the role 
+    const role = initialValue.hr[0];
+    // extract full name
+    const fullName = initialValue.name.join(" ");
 
-    //checks if roleAndName object contains that specific role
-    if (!roleAndName[role]) {
-      roleAndName[role] = []; //It will add role with an empty array
+    //checks if accumulator already has property or not
+    if (!accumulator[role]) {
+      // create an empty array for this role
+      accumulator[role] = [];
     }
-    roleAndName[role].push(fullName); // push fullname on array with matching role
+    // appends fullname into the array created for their specific role
+    accumulator[role].push(fullName);
+
+    //returns the updated accumulator
+    return accumulator;
+  }, {});
+  if (Object.keys(userByRole).length > 0) {
+    return userByRole;
   }
-  if (Object.keys(roleAndName).length > 0) {
-    return roleAndName; //return the result if it has some keys
-  } else {
-    return null; //return null if objects doesn't contain anything.
-  }
+  return null;
 }
+
 module.exports = groupByRole;
